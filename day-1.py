@@ -1,6 +1,6 @@
 
 def parse():
-    with open('./files/day-1-1.txt') as f:
+    with open('./files/day-1.txt') as f:
         lines = [line.strip() for line in f.readlines()]
     elves = []
     current_elf = 0
@@ -13,6 +13,10 @@ def parse():
     return elves
 
 
+def most_snacks(elves): return max(elves)
+def most_snacks_3(elves): return sum(elves.sort(descending=True)[:3])
+
+
 if __name__ == '__main__':
     elves = parse()
-    print(max(elves))
+    print(most_snacks_3(elves))
