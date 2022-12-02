@@ -2,7 +2,6 @@
 def parse():
     with open('./files/day-2.txt') as f:
         lines = [line.strip() for line in f.readlines()]
-    print(len(lines))
     return lines
 
 
@@ -87,8 +86,5 @@ if __name__ == '__main__':
         opponent, res = line.split(" ")
         me = choose_move(translate(opponent), res)
         s = score(translate(opponent), me)
-        print(f"{res} {translate(opponent)}x{me}={s}")
         total_score += s
     print(total_score)
-
-# Entre 11110 et 17409
