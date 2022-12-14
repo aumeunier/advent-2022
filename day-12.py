@@ -51,7 +51,7 @@ def show_map(map, visited, start, end, x):
         print(line)
 
 
-def find_path(map, reverse=False):
+def find_path(map):
     # Initialize
     visited = []
     start, end = None, None
@@ -62,16 +62,15 @@ def find_path(map, reverse=False):
                 start = (i, j)
             elif map[i][j] == 'E':
                 end = (i, j)
-    if reverse:
-        stack = [State("E", end, [], start)]
-    else:
-        stack = [State("S", start, [], end)]
+    stack = [State("S", start, [], end)]
     while stack:
         state = stack.pop(0)
         pos = state.pos
-        if debug:
+        if not debug:
             show_map(map, visited, start, end, pos)
         letter = map[pos[0]][pos[1]]
+        if debug:
+            print(f"Looking at {pos}: {letter}. Stack={len(stack)}")
         if pos == end:
             return state
         for d in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
@@ -79,38 +78,24 @@ def find_path(map, reverse=False):
             if next_pos[0] < 0 or next_pos[0] >= len(map) or next_pos[1] < 0 or next_pos[1] >= len(map[0]) or visited[next_pos[0]][next_pos[1]]:
                 continue
             next_letter = map[next_pos[0]][next_pos[1]]
-            if reverse:
-                if next_letter == "S":
-                    if letter == "z":
-                        return state.go_to("S", next_pos)
-                else:
-                    inserted = False
-                    next_state = state.go_to(next_letter, next_pos)
-                    visited[next_pos[0]][next_pos[1]] = True
-                    for i in range(len(stack)):
-                        s = stack[i]
-                        if s.length > state.length:
-                            stack.insert(i, next_state)
-                            inserted = True
-                            break
-                    if not inserted:
-                        stack.append(next_state)
-            else:
-                if next_letter == "E":
-                    if letter == "z":
-                        return state.go_to("E", next_pos)
-                elif letter == "S" or ((ord(next_letter) - ord(letter)) <= 1):
-                    inserted = False
-                    next_state = state.go_to(next_letter, next_pos)
-                    visited[next_pos[0]][next_pos[1]] = True
-                    for i in range(len(stack)):
-                        s = stack[i]
-                        if s.length > state.length:
-                            stack.insert(i, next_state)
-                            inserted = True
-                            break
-                    if not inserted:
-                        stack.append(next_state)
+            if next_letter == "E":
+                if letter == "z":
+                    return state.go_to("E", next_pos)
+            elif letter == "S" or ((ord(next_letter) - ord(letter)) <= 1):
+                inserted = False
+                next_state = state.go_to(next_letter, next_pos)
+                visited[next_pos[0]][next_pos[1]] = True
+                if debug:
+                    print(f"Adding {next_letter} at {next_pos} to stack.")
+                for i in range(len(stack)):
+                    s = stack[i]
+                    if s.length > state.length:
+                        stack.insert(i, next_state)
+                        inserted = True
+                        break
+                if not inserted:
+                    stack.append(next_state)
+    print("=(")
 
 
 final_path = find_path(load_map(True))
